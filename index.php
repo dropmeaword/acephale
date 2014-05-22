@@ -27,6 +27,8 @@ ToroHook::add("404", function() {
 ToroWorkaround::serve(array(
     "/" => "MainHandler",
     "/manage" => "ManagementHandler",
+    "/manage/add" => "ManagementHandler",
+    "/manage/remove" => "ManagementHandler",
     "/install" => "InstallHandler",
     "/unsubscribe" => "UnsubscribeHandler",
     "/logout" => "LogoutHandler"
