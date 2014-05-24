@@ -46,14 +46,18 @@ class ManagementHandler extends AuthenticatedHandler {
 	}
 
 	private function parse_addresses($text) {
-		$inlst = split($text);
+		# @TODO get new line character from PHP environment
+		$text = trim($text);
+		$inlst = split("\r\n", $text);
 		$outlst = array();
 
-		foreach($lst as $address) {
+		foreach($inlst as $address) {
 			# check that we are indeed dealing with a valid email address
 			if(preg_match("/[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}/", $address) ) {
+				error_log("parsing valid address: $address");
 				array_push($outlst, $address);
 			} else {
+				error_log("parsing invalid: $address");
 				Flash::warning($address." is not a valid email address, ignoring.");
 			}
 		}
@@ -62,18 +66,25 @@ class ManagementHandler extends AuthenticatedHandler {
 	}
 
 	public function post() {
+		$usr = $this->get_user();
+
 		if( isset($_POST['action']) ) {
 			switch($_POST['action']) {
 				case 'add':
 					$list = $this->parse_addresses($_POST['addresses']);
-					var_dump($list);
+					foreach($list as $address) {
+						error_log("adding: $address");
+					}
 					break;
 				case 'remove':
 					$list = $this->parse_addresses($_POST['addresses']);
-					var_dump($list);
+					foreach($list as $address) {
+						error_log("removing: $address");
+					}
 					break;
 				case 'search':
 					$query = $_POST['term'];
+					error_log("searching for: $query");
 					break;
 			}
 
