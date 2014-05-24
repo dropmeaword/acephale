@@ -68,30 +68,65 @@ class ManagementHandler extends AuthenticatedHandler {
 	public function post() {
 		$usr = $this->get_user();
 
+		$resaddresses = array();
+		$restext = "";
+
 		if( isset($_POST['action']) ) {
+			# clear flash messages
+			Flash::clear();
 			switch($_POST['action']) {
+				// ////////////////////////////////////////////////////////////
 				case 'add':
 					$list = $this->parse_addresses($_POST['addresses']);
 					foreach($list as $address) {
-						error_log("adding: $address");
+						error_log("trying to add: $address");
+						if( mm_subscribe($address) ) {
+							array_push($resaddresses, $address);
+						} else {
+							Flash::warning($address." was not added, it probably belongs to an existing member.");
+						}
+					}
+
+					if( !empty($resaddresses) ) {
+						$restext = "The following addresses have been added to the mailing list:";
+					} else {
+						$restext = "No addresses where added.";
 					}
 					break;
+
+				// ////////////////////////////////////////////////////////////
 				case 'remove':
 					$list = $this->parse_addresses($_POST['addresses']);
 					foreach($list as $address) {
-						error_log("removing: $address");
+						error_log("trying to remove: $address");
+						if( mm_unsubscribe($address) ) {
+							array_push($resaddresses, $address);
+						} else {
+							Flash::warning($address." was not removed, it probably wasn't a member anyway.");
+						}
+					}
+
+					if( !empty($resaddresses) ) {
+						$restext = "The following addresses have been removed from the mailing list:";
+					} else {
+						$restext = "Couldn't remove any addresses.";
 					}
 					break;
+
+
+				// ////////////////////////////////////////////////////////////
 				case 'search':
 					$query = $_POST['term'];
+					$restext = "Results for search term: $query";
+					$resaddresses = mm_search($query);
 					error_log("searching for: $query");
 					break;
 			}
 
 			partial_render("manage_result", array(
 										'username' => $usr['username'],
-										'last_login' => $usr['tstamp_last_login'],
-										'last_ip' => $usr['ip_last_login'], 
+										'result' => $restext, 
+										'results' => $resaddresses,
 									)
 						);
 		} // if..else

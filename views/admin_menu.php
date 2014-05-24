@@ -4,18 +4,70 @@ $(function() {
 		$( "#formRemove" ).hide();
 		$( "#formSearch" ).hide();
 		$( "#formAdd" ).show();
+
+   		$("#results").hide();
+   		$("#results").html("");
 	});
 	$( "#lnkRemove" ).click(function() {
 		$( "#formRemove" ).show();
 		$( "#formSearch" ).hide();
 		$( "#formAdd" ).hide();
+
+   		$("#results").hide();
+   		$("#results").html("");
 	});
 
 	$( "#lnkSearch" ).click(function() {
 		$( "#formRemove" ).hide();
 		$( "#formSearch" ).show();
 		$( "#formAdd" ).hide();
+
+   		$("#results").hide();
+   		$("#results").html("");
 	});
+
+	$("#formAdd").submit(function() {
+		$.ajax({
+           type: "POST",
+           url: "/acephale/manage",
+           data: $("#formAdd").serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+           		$("#results").show();
+           		$("#results").html(data);
+           }
+         });
+    	return false; // avoid to execute the actual submit of the form.
+   	});
+
+	$("#formRemove").submit(function() {
+		$.ajax({
+           type: "POST",
+           url: "/acephale/manage",
+           data: $("#formRemove").serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+           		$("#results").show();
+           		$("#results").html(data);
+           }
+         });
+    	return false; // avoid to execute the actual submit of the form.
+	});
+
+	$("#formSearch").submit(function() {
+		$.ajax({
+           type: "POST",
+           url: "/acephale/manage",
+           data: $("#formSearch").serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+           		$("#results").show();
+           		$("#results").html(data);
+           }
+         });
+    	return false; // avoid to execute the actual submit of the form.
+	});
+
 });
 
 </script>
@@ -46,24 +98,27 @@ $(function() {
 </div>
 <?php endif; ?>
 
+<div id="results" style="display:none">
+</div>
+
 <div id="forms">
 	<form id="formAdd" class="form" name="formAdd" action="/acephale/manage" method="post"  style="display:none">
 		<label for="addresses">Only one email address per line please.</label>
 		<input type="hidden" name="action" value="add" />
 		<textarea name="addresses" cols="28" rows="8"></textarea>
-		<input type="submit" value="Add subscribers &#187;" />
+		<input type="submit" id="btnAddSubscribers" value="Add subscribers &#187;" />
 	</form>
 
 	<form id="formRemove" class="form" name="formRemove" action="/acephale/manage" method="post" style="display:none">
 		<label for="addresses">Only one email address per line please.</label>
 		<input type="hidden" name="action" value="remove" />
 		<textarea name="addresses" cols="28" rows="8"></textarea>
-		<input type="submit" value="Remove subscribers &#187;" />
+		<input type="submit" id="btnRemoveSubscribers" value="Remove subscribers &#187;" />
 	</form>
 
 	<form id="formSearch" class="form" name="formSearch" action="/acephale/manage" method="post" style="display:none">
 		<input type="hidden" name="action" value="search" />
 		<input type="text" name="term" placeholder="email address" style="float:left;" />
-		<input type="submit" value="Search for address" style="float:left;" />
+		<input type="submit" id="btnSearch" value="Search for address" style="float:left;" />
 	</form>
 </div>

@@ -23,6 +23,10 @@ class Flash {
     return (count(Flash::$messages) > 0);
   }
 
+  public static function clear() {
+    Flash::$messages = array();
+  }
+
   /*
    * A shortcut to Flash::add()
    *
