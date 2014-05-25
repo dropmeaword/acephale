@@ -26,6 +26,7 @@ $(function() {
    		$("#results").html("");
 	});
 
+/*
 	$("#formAdd").submit(function() {
 		$.ajax({
            type: "POST",
@@ -67,7 +68,7 @@ $(function() {
          });
     	return false; // avoid to execute the actual submit of the form.
 	});
-
+*/
 });
 
 </script>
@@ -98,8 +99,9 @@ $(function() {
 </div>
 <?php endif; ?>
 
-<div id="results" style="display:none">
-</div>
+<?php if( isset($pagectx['result']) && isset($pagectx['results']) ): ?>
+	<?php include "views/manage_result.php"; ?>
+<?php endif; ?>
 
 <div id="forms">
 	<form id="formAdd" class="form" name="formAdd" action="/acephale/manage" method="post"  style="display:none">
