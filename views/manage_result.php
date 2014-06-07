@@ -1,4 +1,4 @@
-<div id="results" style="display:none">
+<div id="results">
 	<div class="resultset">
 		<?php if( Flash::not_empty() ): ?>
 		<div id="notifications">

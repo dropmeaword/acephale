@@ -34,15 +34,23 @@ class AuthenticatedHandler {
 
 class ManagementHandler extends AuthenticatedHandler {
 	public function get() {
+		error_log("ManagementHandler::get " . get_last_path() );
 		parent::ensure_admin();
 		$usr = $this->get_user();
-		view_render("admin_menu", array(
-									'title' => _("Manage acephale"),
-									'username' => $usr['username'],
-									'last_login' => $usr['tstamp_last_login'],
-									'last_ip' => $usr['ip_last_login'], 
-								)
+		$renderaction = get_last_path();
+
+		$params = array(
+						'title' => _("Manage acephale"),
+						'username' => $usr['username'],
+						'last_login' => $usr['tstamp_last_login'],
+						'last_ip' => $usr['ip_last_login'], 
 					);
+
+		if( in_array($renderaction, array('add', 'remove', 'search')) ) {
+			$params = array_merge($params, array('action' => $renderaction) );
+		}
+
+		view_render("admin_menu", $params);
 	}
 
 	private function parse_addresses($text) {
@@ -75,6 +83,7 @@ class ManagementHandler extends AuthenticatedHandler {
 			if( isset($_POST['action']) ) {
 				# clear flash messages
 				//Flash::clear();
+				error_log("MAnageHandler::post - ".$_POST['action']);
 				switch($_POST['action']) {
 					// ////////////////////////////////////////////////////////////
 					case 'add':
