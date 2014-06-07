@@ -12,14 +12,6 @@
 <![endif]-->
 </head>
 <body>
-	<div id="header">
-		<div class="info">Your last login was on <?= time() ?> - <?= sqltime_to_time($pagectx['last_login']) ?> from <?= $pagectx['last_ip']; ?></div>
-		<div class="logout"><a href="/acephale/logout">log out</a></div>
-	</div>
-	
-	<div id="global-container">
-		<h2>Hello <?= $pagectx['username']; ?>.</h2>
-		<?php include $pagectx['template']; ?>	
-	</div>
+	<?php include $pagectx['template']; ?>	
 </body>
 </html>
