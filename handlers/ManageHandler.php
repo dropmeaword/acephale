@@ -56,7 +56,7 @@ class ManagementHandler extends AuthenticatedHandler {
 	private function parse_addresses($text) {
 		# @TODO get new line character from PHP environment
 		$text = trim($text);
-		$inlst = split("\r\n", $text);
+		$inlst = explode("\r\n", $text);
 		$outlst = array();
 
 		foreach($inlst as $address) {
