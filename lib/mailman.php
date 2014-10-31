@@ -58,4 +58,26 @@ function mm_unsubscribe($address) {
 	return $success;
 }
 
+function mm_allmembers() {
+	global $config;
+
+	$results = array();
+	$mm = new Services_Mailman($config['mailman']['admin_url'],
+								$config['mailman']['list'],
+								$config['mailman']['admin_password']);
+	try {
+		$res = $mm->members();
+		#var_dump($res);
+		#echo "===========================<br/>";
+		foreach($res as $result) {
+			array_push($results, $result['address']);
+		}
+		#var_dump($results);
+	} catch (Services_Mailman_Exception $ex) {
+		error_log("Search for term $query failed, message was: ".$ex->getMessage() );
+	}
+
+	return $results;
+}
+
 ?>

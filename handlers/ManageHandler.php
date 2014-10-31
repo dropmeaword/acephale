@@ -131,6 +131,36 @@ class ManagementHandler extends AuthenticatedHandler {
 						$resaddresses = mm_search($query);
 						error_log("searching for: $query");
 						break;
+
+					case 'export':
+						error_log("Exporting all subscribers");
+						$all = mm_allmembers();
+
+						$exportdate = $date = date('Y-m-d H:i:s');
+						$suffix = date("m.d.y");
+						$listname = $config['mailman']['list'];
+						$listurl = $config['mailman']['admin_url'];
+
+						$readme = "The CSV file in this directory contains a list with all the subscribers to
+						the mailing list $listname located at $listurl.
+
+						This export was made on $exportdate";
+
+						$rawdata = "";
+
+						$zip = new ZipArchive();
+						$zipf = "$suffix-$listname-archive.zip";
+
+						$zip->addFromString("READ.me", $readme);
+						$zip->addFromString("allsubscribers.csv", $rawdata);
+
+						header('Content-type: application/zip');
+						header('Content-Disposition: attachment; filename="'.$zipf.'"');
+						header('Content-Length: ' . strlen($rawdata));
+						readfile($zipf);
+						unlink($zipf);
+
+						break;
 				}
 
 				view_render("admin_menu", array(

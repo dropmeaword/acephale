@@ -89,6 +89,8 @@ $(function() {
 			<dd>Take off an existing email address from the newsletter</dd>
 			<dt><a id="lnkSearch"  href="/acephale/manage/search">Search</a></dt>
 			<dd>Search for a particular subscriber</dd>
+			<dt><a id="lnkSearch"  href="/acephale/manage/export">Export</a></dt>
+			<dd>Export list with all subscribers</dd>
 		</dl>
 	</div>
 
