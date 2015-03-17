@@ -46,7 +46,9 @@ class ManagementHandler extends AuthenticatedHandler {
 						'last_ip' => $usr['ip_last_login'], 
 					);
 
-		if( in_array($renderaction, array('add', 'remove', 'search')) ) {
+		if($renderaction == 'export') {
+			$this->download_export();
+		} else if( in_array($renderaction, array('add', 'remove', 'search')) ) {
 			$params = array_merge($params, array('action' => $renderaction) );
 		}
 
@@ -71,6 +73,44 @@ class ManagementHandler extends AuthenticatedHandler {
 		}
 
 		return $outlst;
+	}
+
+	protected function download_export() {
+		error_log("Exporting all subscribers");
+		$all = mm_allmembers();
+
+		$exportdate = $date = date('Y-m-d H:i:s');
+		$suffix = date("m.d.y");
+		$listname = mm_get_list_name();
+		$listurl = mm_get_list_url();
+
+		$readme = "The CSV file in this directory contains a list with all the subscribers to
+		the mailing list $listname located at $listurl.
+
+		This export was made on $exportdate";
+
+		$rawdata = "";
+		foreach($all as $addr) {
+			error_log("Exporting subscriber ".$addr);
+			$rawdata .= $addr.",,\n";
+		}
+
+		$zipf = "/tmp/$suffix-$listname-archive.zip";
+
+		$zip = new ZipArchive();
+		$zip->open($zipf, ZipArchive::CREATE);
+
+		$zip->addFromString("READ.me", $readme);
+		$zip->addFromString("allsubscribers.csv", $rawdata);
+		$zip->close();
+
+		#var_dump($rawdata);
+
+		header('Content-type: application/zip');
+		header('Content-Disposition: attachment; filename="'.basename($zipf).'"');
+		header('Content-Length: ' . filesize($zipf) );
+		print readfile($zipf);
+		unlink($zipf);
 	}
 
 	public function post() {
@@ -133,33 +173,7 @@ class ManagementHandler extends AuthenticatedHandler {
 						break;
 
 					case 'export':
-						error_log("Exporting all subscribers");
-						$all = mm_allmembers();
-
-						$exportdate = $date = date('Y-m-d H:i:s');
-						$suffix = date("m.d.y");
-						$listname = $config['mailman']['list'];
-						$listurl = $config['mailman']['admin_url'];
-
-						$readme = "The CSV file in this directory contains a list with all the subscribers to
-						the mailing list $listname located at $listurl.
-
-						This export was made on $exportdate";
-
-						$rawdata = "";
-
-						$zip = new ZipArchive();
-						$zipf = "$suffix-$listname-archive.zip";
-
-						$zip->addFromString("READ.me", $readme);
-						$zip->addFromString("allsubscribers.csv", $rawdata);
-
-						header('Content-type: application/zip');
-						header('Content-Disposition: attachment; filename="'.$zipf.'"');
-						header('Content-Length: ' . strlen($rawdata));
-						readfile($zipf);
-						unlink($zipf);
-
+						$this->download_export();
 						break;
 				}
 

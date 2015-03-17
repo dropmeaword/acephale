@@ -20,6 +20,7 @@ ToroWorkaround::serve(array(
     "/manage/add" => "ManagementHandler",
     "/manage/remove" => "ManagementHandler",
     "/manage/search" => "ManagementHandler",
+    "/manage/export" => "ManagementHandler",
     "/install" => "InstallHandler",
     "/unsubscribe" => "UnsubscribeHandler",
     "/logout" => "LogoutHandler"

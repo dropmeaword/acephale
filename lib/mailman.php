@@ -67,10 +67,10 @@ function mm_allmembers() {
 								$config['mailman']['admin_password']);
 	try {
 		$res = $mm->members();
-		#var_dump($res);
+		#var_dump($res[0]);
 		#echo "===========================<br/>";
-		foreach($res as $result) {
-			array_push($results, $result['address']);
+		foreach($res[0] as $result) {
+			array_push($results, $result);
 		}
 		#var_dump($results);
 	} catch (Services_Mailman_Exception $ex) {

@@ -8,6 +8,11 @@ function mm_get_list_name() {
 	return $config['mailman']['list'];
 }
 
+function mm_get_list_url() {
+    global $config;
+    return $config['mailman']['list_url'];
+}
+
 /**
  * Get application's base url.
  */
