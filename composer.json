@@ -1,0 +1,28 @@
+{
+    "authors": [
+        {
+            "email": "luis@greenhost.nl",
+            "name": "Luis Fernandez",
+            "role": "Lead"
+        }
+    ],
+    
+    "minimum-stability": "dev",
+
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/pear/Services_Mailman.git"
+        }
+    ],
+
+    "description": "Mailman for human beings",
+    "include-path": [
+        "./"
+    ],
+    "license": "GPL",
+    "name": "dropmeaword/acephale",
+    "require": {
+        "pear/Services_Mailman": "master"
+    }
+}
