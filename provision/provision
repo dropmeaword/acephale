@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# include reusable functions for shell-scripts
+. /vagrant/provision/lib/functions
+
+# make sure this script is run by root only
+if [ "$(id -u)" != "0" ]; then
+   fatal "This script must be run as root"
+   exit 1
+fi
+
+## #################################################
+## install and update packages
+## #################################################
+
+section "update package sources"
+apt-get update -q -y
+
+# packages to be installed in provisioned machine
+PACKAGES="git apache2 php5 php-apc php5-dev php5-curl php5-gd php5-fpm php5-ldap php5-xdebug php-pear php5-xsl php5-mysql php5-cli libapache2-mod-php5"
+
+#ifconfig eth0 | grep inet | awk '{ print $2 }'
+
+section "installing dependencies"
+for dep in $PACKAGES
+do
+    echo "\033[47;34m>>> installing package $dep\033[0m"
+	apt-get install -q -y $dep || fatal "unable to install $dep"
+done
+
+section "upgrade distro"
+apt-get upgrade -q -y
+
+# section "upgrading PEAR"
+# /usr/bin/pear upgrade
+# /usr/bin/pear config-set auto_discover 1
+# /usr/bin/pear update-channels
+
+## #################################################
+## configure webserver
+## #################################################
+section "configuring site"
+info "enabling modules"
+a2enmod ssl || fatal "couldn't enable SSL module"
+a2enmod rewrite || fatal "couldn't enable rewrite_mod"
+
+info "installing config files"
+install --owner root --group vagrant /vagrant/provision/etc/apache2/acephale.vhost /etc/apache2/sites-available
+install --owner root --group vagrant /vagrant/provision/etc/apache2/ports.conf /etc/apache2
+VHOSTCFG="/etc/apache2/sites-available/acephale.vhost"
+if [ -f "/etc/apache2/sites-enabled/000-default" ];
+then
+	warning "Virtual host for cosmos already exist, wiping existing and copying vhost config again."
+	rm /etc/apache2/sites-enabled/000-default
+fi
+
+ln -s  $VHOSTCFG /etc/apache2/sites-enabled/000-default || fatal "failed to add site 'cosmos' as default"
+
+## #################################################
+## finalize install
+## #################################################
+section "restarting services"
+service apache2 restart || fatal "couldn't initialize apache"
+
+echo "You have been provisioned. Goodbye!"
+exit 0

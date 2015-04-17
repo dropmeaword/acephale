@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# prevent vagrant stdin related errors
+sed -i 's/^mesg n$/tty -s \&\& mesg n/g' /root/.profile
+
+fatal () {
+        echo "\033[31m$0: fatal: $*" >&2; echo "\033[0m"
+        exit 99
+} 
+
+warning () {
+        echo "\033[33m$0: warning: $*" >&2; echo "\033[0m"
+} 
+
+info () {
+        echo "\033[36minfo: $*" >&2; echo "\033[0m"
+} 
+
+section () {
+	echo "\033[30;43m====[ $* ]==================================================================\033[0m"
+}
